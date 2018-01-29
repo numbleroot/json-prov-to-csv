@@ -1,7 +1,8 @@
 package main
 
 type ProvFile struct {
-	Nodes []Node `json:"nodes"`
+	Goals []Node `json:"goals"`
+	Rules []Node `json:"rules"`
 	Edges []Edge `json:"edges"`
 }
 

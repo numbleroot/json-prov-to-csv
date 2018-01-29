@@ -47,12 +47,21 @@ func main() {
 	}
 
 	// Create slice of string slices containing
-	// all information for converting all nodes
+	// all information for converting all goal nodes
 	// of the provenance graph from JSON to CSV.
-	nodes := make([][]string, 1, len(provCont.Nodes))
-	nodes[0] = []string{"id", "label", "table"}
-	for i := range provCont.Nodes {
-		nodes = append(nodes, []string{provCont.Nodes[i].ID, provCont.Nodes[i].Label, provCont.Nodes[i].Table})
+	goals := make([][]string, 1, len(provCont.Goals))
+	goals[0] = []string{"id", "label", "table"}
+	for i := range provCont.Goals {
+		goals = append(goals, []string{provCont.Goals[i].ID, provCont.Goals[i].Label, provCont.Goals[i].Table})
+	}
+
+	// Create slice of string slices containing
+	// all information for converting all rule nodes
+	// of the provenance graph from JSON to CSV.
+	rules := make([][]string, 1, len(provCont.Rules))
+	rules[0] = []string{"id", "label", "table"}
+	for i := range provCont.Rules {
+		rules = append(rules, []string{provCont.Rules[i].ID, provCont.Rules[i].Label, provCont.Rules[i].Table})
 	}
 
 	// Create slice of string slices containing
@@ -72,25 +81,42 @@ func main() {
 		os.Exit(1)
 	}
 
-	nodesFile, err := os.OpenFile(filepath.Join(outDir, "nodes.csv"), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+	goalsFile, err := os.OpenFile(filepath.Join(outDir, "goals.csv"), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
 	if err != nil {
-		fmt.Printf("Could not open 'nodes.csv' file in output directory: %v\n", err)
+		fmt.Printf("Could not open 'goals.csv' file in output directory: %v\n", err)
 		os.Exit(1)
 	}
-	defer nodesFile.Close()
+	defer goalsFile.Close()
+
+	rulesFile, err := os.OpenFile(filepath.Join(outDir, "rules.csv"), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+	if err != nil {
+		fmt.Printf("Could not open 'rules.csv' file in output directory: %v\n", err)
+		os.Exit(1)
+	}
+	defer rulesFile.Close()
 
 	edgesFile, err := os.OpenFile(filepath.Join(outDir, "edges.csv"), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
 	if err != nil {
 		fmt.Printf("Could not open 'edges.csv' file in output directory: %v\n", err)
 		os.Exit(1)
 	}
+	defer edgesFile.Close()
 
-	nodesWriter := csv.NewWriter(nodesFile)
-	nodesWriter.WriteAll(nodes)
+	goalsWriter := csv.NewWriter(goalsFile)
+	goalsWriter.WriteAll(goals)
 
-	err = nodesWriter.Error()
+	err = goalsWriter.Error()
 	if err != nil {
-		fmt.Printf("Error while writing back CSV data for nodes: %v\n", err)
+		fmt.Printf("Error while writing back CSV data for goal nodes: %v\n", err)
+		os.Exit(1)
+	}
+
+	rulesWriter := csv.NewWriter(rulesFile)
+	rulesWriter.WriteAll(rules)
+
+	err = rulesWriter.Error()
+	if err != nil {
+		fmt.Printf("Error while writing back CSV data for rule nodes: %v\n", err)
 		os.Exit(1)
 	}
 
