@@ -31,14 +31,13 @@ func main() {
 		fmt.Printf("Failed to call Abs() on supplied molly output directory: %v\n", err)
 		os.Exit(1)
 	}
-	mollyRun := filepath.Base(mollyOut)
 
 	csvOutDir, err := filepath.Abs(*csvOutDirFlag)
 	if err != nil {
 		fmt.Printf("Failed to call Abs() on supplied output directory: %v\n", err)
 		os.Exit(1)
 	}
-	csvOutDir = filepath.Join(csvOutDir, mollyRun)
+	csvOutDir = filepath.Join(csvOutDir, "molly")
 
 	csvFilesUser := *csvFilesUserFlag
 	csvFilesGroup := *csvFilesGroupFlag
