@@ -47,9 +47,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Find all run_X_provenance.json files in the
+	// Find all run_X_pre_provenance.json files in the
 	// supplied output directory of a molly execution.
-	runFiles, err := filepath.Glob(filepath.Join(mollyOut, "run_*_provenance.json"))
+	runFiles, err := filepath.Glob(filepath.Join(mollyOut, "run_*_pre_provenance.json"))
 	if err != nil {
 		fmt.Printf("Glob() not possible on molly output directory: %v\n", err)
 		os.Exit(1)
@@ -108,21 +108,124 @@ func main() {
 			edges = append(edges, []string{provCont.Edges[i].From, provCont.Edges[i].To})
 		}
 
-		goalsFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_goals.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		goalsFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_pre_goals.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
 		if err != nil {
 			fmt.Printf("Could not open 'goals.csv' file in output directory: %v\n", err)
 			os.Exit(1)
 		}
 		defer goalsFile.Close()
 
-		rulesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_rules.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		rulesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_pre_rules.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
 		if err != nil {
 			fmt.Printf("Could not open 'rules.csv' file in output directory: %v\n", err)
 			os.Exit(1)
 		}
 		defer rulesFile.Close()
 
-		edgesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_edges.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		edgesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_pre_edges.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		if err != nil {
+			fmt.Printf("Could not open 'edges.csv' file in output directory: %v\n", err)
+			os.Exit(1)
+		}
+		defer edgesFile.Close()
+
+		goalsWriter := csv.NewWriter(goalsFile)
+		goalsWriter.WriteAll(goals)
+
+		err = goalsWriter.Error()
+		if err != nil {
+			fmt.Printf("Error while writing back CSV data for goal nodes: %v\n", err)
+			os.Exit(1)
+		}
+
+		rulesWriter := csv.NewWriter(rulesFile)
+		rulesWriter.WriteAll(rules)
+
+		err = rulesWriter.Error()
+		if err != nil {
+			fmt.Printf("Error while writing back CSV data for rule nodes: %v\n", err)
+			os.Exit(1)
+		}
+
+		edgesWriter := csv.NewWriter(edgesFile)
+		edgesWriter.WriteAll(edges)
+
+		err = edgesWriter.Error()
+		if err != nil {
+			fmt.Printf("Error while writing back CSV data for edges: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	// Find all run_X_post_provenance.json files in the
+	// supplied output directory of a molly execution.
+	runFiles, err = filepath.Glob(filepath.Join(mollyOut, "run_*_post_provenance.json"))
+	if err != nil {
+		fmt.Printf("Glob() not possible on molly output directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	for i := range runFiles {
+
+		var provCont ProvFile
+
+		// Read in JSON provenance graph.
+		rawProvCont, err := ioutil.ReadFile(runFiles[i])
+		if err != nil {
+			fmt.Printf("Error reading '%s': %v\n", runFiles[i], err)
+			os.Exit(1)
+		}
+
+		// Unmarshal (decode) JSON into defined
+		// provenance file structure.
+		err = json.Unmarshal(rawProvCont, &provCont)
+		if err != nil {
+			fmt.Printf("Failed to unmarshal JSON content to provenance file structure: %v\n", err)
+			os.Exit(1)
+		}
+
+		// Create slice of string slices containing
+		// all information for converting all goal nodes
+		// of the provenance graph from JSON to CSV.
+		goals := make([][]string, 1, len(provCont.Goals))
+		goals[0] = []string{"id", "label", "table"}
+		for i := range provCont.Goals {
+			goals = append(goals, []string{provCont.Goals[i].ID, provCont.Goals[i].Label, provCont.Goals[i].Table})
+		}
+
+		// Create slice of string slices containing
+		// all information for converting all rule nodes
+		// of the provenance graph from JSON to CSV.
+		rules := make([][]string, 1, len(provCont.Rules))
+		rules[0] = []string{"id", "label", "table"}
+		for i := range provCont.Rules {
+			rules = append(rules, []string{provCont.Rules[i].ID, provCont.Rules[i].Label, provCont.Rules[i].Table})
+		}
+
+		// Create slice of string slices containing
+		// all information for converting all edges
+		// of the provenance graph from JSON to CSV.
+		edges := make([][]string, 1, len(provCont.Edges))
+		edges[0] = []string{"from", "to"}
+		for i := range provCont.Edges {
+			edges = append(edges, []string{provCont.Edges[i].From, provCont.Edges[i].To})
+		}
+
+		goalsFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_post_goals.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		if err != nil {
+			fmt.Printf("Could not open 'goals.csv' file in output directory: %v\n", err)
+			os.Exit(1)
+		}
+		defer goalsFile.Close()
+
+		rulesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_post_rules.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
+		if err != nil {
+			fmt.Printf("Could not open 'rules.csv' file in output directory: %v\n", err)
+			os.Exit(1)
+		}
+		defer rulesFile.Close()
+
+		edgesFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_post_edges.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
 		if err != nil {
 			fmt.Printf("Could not open 'edges.csv' file in output directory: %v\n", err)
 			os.Exit(1)
