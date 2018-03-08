@@ -87,7 +87,7 @@ func main() {
 		goals := make([][]string, 1, len(provCont.Goals))
 		goals[0] = []string{"id", "label", "table"}
 		for i := range provCont.Goals {
-			goals = append(goals, []string{provCont.Goals[i].ID, provCont.Goals[i].Label, provCont.Goals[i].Table})
+			goals = append(goals, []string{fmt.Sprintf("pre_%s", provCont.Goals[i].ID), provCont.Goals[i].Label, provCont.Goals[i].Table})
 		}
 
 		// Create slice of string slices containing
@@ -96,7 +96,7 @@ func main() {
 		rules := make([][]string, 1, len(provCont.Rules))
 		rules[0] = []string{"id", "label", "table"}
 		for i := range provCont.Rules {
-			rules = append(rules, []string{provCont.Rules[i].ID, provCont.Rules[i].Label, provCont.Rules[i].Table})
+			rules = append(rules, []string{fmt.Sprintf("pre_%s", provCont.Rules[i].ID), provCont.Rules[i].Label, provCont.Rules[i].Table})
 		}
 
 		// Create slice of string slices containing
@@ -105,7 +105,7 @@ func main() {
 		edges := make([][]string, 1, len(provCont.Edges))
 		edges[0] = []string{"from", "to"}
 		for i := range provCont.Edges {
-			edges = append(edges, []string{provCont.Edges[i].From, provCont.Edges[i].To})
+			edges = append(edges, []string{fmt.Sprintf("pre_%s", provCont.Edges[i].From), fmt.Sprintf("pre_%s", provCont.Edges[i].To)})
 		}
 
 		goalsFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_pre_goals.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
@@ -190,7 +190,7 @@ func main() {
 		goals := make([][]string, 1, len(provCont.Goals))
 		goals[0] = []string{"id", "label", "table"}
 		for i := range provCont.Goals {
-			goals = append(goals, []string{provCont.Goals[i].ID, provCont.Goals[i].Label, provCont.Goals[i].Table})
+			goals = append(goals, []string{fmt.Sprintf("post_%s", provCont.Goals[i].ID), provCont.Goals[i].Label, provCont.Goals[i].Table})
 		}
 
 		// Create slice of string slices containing
@@ -199,7 +199,7 @@ func main() {
 		rules := make([][]string, 1, len(provCont.Rules))
 		rules[0] = []string{"id", "label", "table"}
 		for i := range provCont.Rules {
-			rules = append(rules, []string{provCont.Rules[i].ID, provCont.Rules[i].Label, provCont.Rules[i].Table})
+			rules = append(rules, []string{fmt.Sprintf("post_%s", provCont.Rules[i].ID), provCont.Rules[i].Label, provCont.Rules[i].Table})
 		}
 
 		// Create slice of string slices containing
@@ -208,7 +208,7 @@ func main() {
 		edges := make([][]string, 1, len(provCont.Edges))
 		edges[0] = []string{"from", "to"}
 		for i := range provCont.Edges {
-			edges = append(edges, []string{provCont.Edges[i].From, provCont.Edges[i].To})
+			edges = append(edges, []string{fmt.Sprintf("post_%s", provCont.Edges[i].From), fmt.Sprintf("post_%s", provCont.Edges[i].To)})
 		}
 
 		goalsFile, err := os.OpenFile(filepath.Join(tmpOutDir, fmt.Sprintf("%d_post_goals.csv", i)), (os.O_CREATE | os.O_TRUNC | os.O_WRONLY), 0644)
