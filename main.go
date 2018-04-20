@@ -81,28 +81,43 @@ func main() {
 			os.Exit(1)
 		}
 
+		size := len(provCont.Goals)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all goal nodes
 		// of the provenance graph from JSON to CSV.
-		goals := make([][]string, 1, len(provCont.Goals))
+		goals := make([][]string, 1, size)
 		goals[0] = []string{"id", "label", "table"}
 		for i := range provCont.Goals {
 			goals = append(goals, []string{fmt.Sprintf("pre_%s", provCont.Goals[i].ID), provCont.Goals[i].Label, provCont.Goals[i].Table})
 		}
 
+		size = len(provCont.Rules)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all rule nodes
 		// of the provenance graph from JSON to CSV.
-		rules := make([][]string, 1, len(provCont.Rules))
+		rules := make([][]string, 1, size)
 		rules[0] = []string{"id", "label", "table"}
 		for i := range provCont.Rules {
 			rules = append(rules, []string{fmt.Sprintf("pre_%s", provCont.Rules[i].ID), provCont.Rules[i].Label, provCont.Rules[i].Table})
 		}
 
+		size = len(provCont.Edges)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all edges
 		// of the provenance graph from JSON to CSV.
-		edges := make([][]string, 1, len(provCont.Edges))
+		edges := make([][]string, 1, size)
 		edges[0] = []string{"from", "to"}
 		for i := range provCont.Edges {
 			edges = append(edges, []string{fmt.Sprintf("pre_%s", provCont.Edges[i].From), fmt.Sprintf("pre_%s", provCont.Edges[i].To)})
@@ -184,28 +199,43 @@ func main() {
 			os.Exit(1)
 		}
 
+		size := len(provCont.Goals)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all goal nodes
 		// of the provenance graph from JSON to CSV.
-		goals := make([][]string, 1, len(provCont.Goals))
+		goals := make([][]string, 1, size)
 		goals[0] = []string{"id", "label", "table"}
 		for i := range provCont.Goals {
 			goals = append(goals, []string{fmt.Sprintf("post_%s", provCont.Goals[i].ID), provCont.Goals[i].Label, provCont.Goals[i].Table})
 		}
 
+		size = len(provCont.Rules)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all rule nodes
 		// of the provenance graph from JSON to CSV.
-		rules := make([][]string, 1, len(provCont.Rules))
+		rules := make([][]string, 1, size)
 		rules[0] = []string{"id", "label", "table"}
 		for i := range provCont.Rules {
 			rules = append(rules, []string{fmt.Sprintf("post_%s", provCont.Rules[i].ID), provCont.Rules[i].Label, provCont.Rules[i].Table})
 		}
 
+		size = len(provCont.Edges)
+		if size < 1 {
+			size = 1
+		}
+
 		// Create slice of string slices containing
 		// all information for converting all edges
 		// of the provenance graph from JSON to CSV.
-		edges := make([][]string, 1, len(provCont.Edges))
+		edges := make([][]string, 1, size)
 		edges[0] = []string{"from", "to"}
 		for i := range provCont.Edges {
 			edges = append(edges, []string{fmt.Sprintf("post_%s", provCont.Edges[i].From), fmt.Sprintf("post_%s", provCont.Edges[i].To)})
